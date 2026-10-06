@@ -1,0 +1,29 @@
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local preview / runtime artifacts
+node_modules/
+.env
+.env.*
+*.log
+
+# Optional: common generated web artifacts
+.cache/
+coverage/
+dist/
+build/
+.tmp/
+
+# Keep the project assets tracked
+!assets/
+!assets/**/*.png
+!assets/**/*.svg
+!assets/**/*.jpeg
+!assets/**/*.jpg
+!assets/**/*.mp4
