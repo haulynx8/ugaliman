@@ -13,42 +13,59 @@
 })();
 
 (function(){
-  var media=[
+  var fallbackMedia=[
     {type:"image",src:"assets/ugalim_pic1.jpeg",title:"Safari Sevens Nairobi",description:"Grill smoke, crowd energy, and the full Kenyan spread."},
     {type:"image",src:"assets/ugalim_pic2.jpeg",title:"Community Day",description:"Fresh plates served hot for a big crowd."},
     {type:"video",src:"assets/videos/ugalim1.mp4",poster:"assets/ugalim_pic2.jpeg",title:"Kitchen Highlights",description:"Short clip from the grill line and live prep."},
     {type:"video",src:"assets/videos/ugalim2.mp4",poster:"assets/ugalim_pic1.jpeg",title:"The Grill Line",description:"Fresh ugali and nyama choma in motion."},
-    {type:"video",src:"assets/videos/ugalim3.mp4",poster:"assets/ugalim_pic2.jpeg",title:"The Grill Line",description:"Fresh ugali and nyama choma in motion."}
+    {type:"video",src:"assets/videos/ugalim3.mp4",poster:"assets/ugalim_pic2.jpeg",title:"Cooking for the Crowd",description:"Made on site and served hot."}
   ];
 
-  var grid=document.getElementById("media-grid");
-  if(!grid) return;
+  function render(media){
+    var grid=document.getElementById("media-grid");
+    if(!grid || !Array.isArray(media)) return;
+    grid.textContent="";
+    media.forEach(function(item){
+      if(!item || !item.src || !item.title || !item.description) return;
+      var figure=document.createElement("figure");
+      figure.className="media-card";
 
-  media.forEach(function(item){
-    var figure=document.createElement("figure");
-    figure.className="media-card";
+      var element=item.type==="video" ? document.createElement("video") : document.createElement("img");
 
-    var element=item.type==="video" ? document.createElement("video") : document.createElement("img");
+      if(item.type==="video"){
+        element.controls=true;
+        element.playsInline=true;
+        element.muted=true;
+        element.preload="metadata";
+        element.poster=item.poster || "";
+        element.setAttribute("aria-label", item.title + ": " + item.description);
+        var source=document.createElement("source");
+        source.src=item.src;
+        source.type="video/mp4";
+        element.appendChild(source);
+      }else{
+        element.src=item.src;
+        element.alt=item.title + ": " + item.description;
+        element.loading="lazy";
+      }
 
-    if(item.type==="video"){
-      element.controls=true;
-      element.playsInline=true;
-      element.muted=true;
-      element.poster=item.poster || "";
-      var source=document.createElement("source");
-      source.src=item.src;
-      source.type="video/mp4";
-      element.appendChild(source);
-    }else{
-      element.src=item.src;
-      element.alt=item.title;
-    }
+      var caption=document.createElement("figcaption");
+      caption.appendChild(document.createTextNode(item.title));
+      var description=document.createElement("span");
+      description.textContent=item.description;
+      caption.appendChild(description);
 
-    var caption=document.createElement("figcaption");
-    caption.innerHTML=item.title + "<span>" + item.description + "</span>";
+      figure.appendChild(element);
+      figure.appendChild(caption);
+      grid.appendChild(figure);
+    });
+  }
 
-    figure.appendChild(element);
-    figure.appendChild(caption);
-    grid.appendChild(figure);
-  });
+  fetch("content/media.json", {cache:"no-cache"})
+    .then(function(response){
+      if(!response.ok) throw new Error("Gallery content could not be loaded");
+      return response.json();
+    })
+    .then(function(data){render(data.media);})
+    .catch(function(){render(fallbackMedia);});
 })();
