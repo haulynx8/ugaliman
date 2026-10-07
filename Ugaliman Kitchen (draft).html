@@ -30,6 +30,10 @@
   "contactPoint": {"@type": "ContactPoint", "contactType": "sales", "url": "https://wa.link/ykb016"}
 }
 </script>
+<script>
+  // Identity invite and password-reset emails link to the homepage; send them to the editor
+  if (/(invite|recovery|confirmation|email_change)_token=/.test(location.hash)) location.replace("/admin/" + location.hash);
+</script>
 </head>
 <body>
 
