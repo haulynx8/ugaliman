@@ -17,68 +17,6 @@
   </style>
 </head>
 <body>
-  <!-- Shown only when arriving from an Identity invite or password-reset email -->
-  <main id="account">
-    <h1 id="account-title">Set your password</h1>
-    <p id="account-text">Choose a password for the gallery editor.</p>
-    <form id="account-form">
-      <label for="account-password">New password</label>
-      <input id="account-password" type="password" autocomplete="new-password" minlength="8" required>
-      <button type="submit">Save password</button>
-    </form>
-    <p id="account-error" role="alert"></p>
-  </main>
-
-  <script type="module">
-    import { handleAuthCallback, acceptInvite, updateUser, logout } from "https://esm.sh/@netlify/identity@2";
-
-    const loadCms = () => {
-      document.getElementById("account").remove();
-      const s = document.createElement("script");
-      s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
-      document.body.appendChild(s);
-    };
-
-    const showPasswordForm = (title, text, save) => {
-      document.getElementById("account-title").textContent = title;
-      document.getElementById("account-text").textContent = text;
-      document.getElementById("account").style.display = "block";
-      const form = document.getElementById("account-form");
-      const err = document.getElementById("account-error");
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        err.textContent = "";
-        form.querySelector("button").disabled = true;
-        try {
-          await save(document.getElementById("account-password").value);
-          // The editor has its own sign-in, so start it fresh with the new password
-          await logout().catch(() => {});
-          loadCms();
-        } catch (error) {
-          err.textContent = error.message || "Something went wrong. Please try again.";
-          form.querySelector("button").disabled = false;
-        }
-      });
-    };
-
-    if (/(invite|recovery|confirmation|email_change)_token=/.test(location.hash)) {
-      try {
-        const result = await handleAuthCallback();
-        history.replaceState(null, "", location.pathname);
-        if (result?.type === "invite") {
-          showPasswordForm("Welcome to the gallery editor", "Choose a password to finish setting up your account.", (pw) => acceptInvite(result.token, pw));
-        } else if (result?.type === "recovery") {
-          showPasswordForm("Reset your password", "Choose a new password for the gallery editor.", (pw) => updateUser({ password: pw }));
-        } else {
-          loadCms();
-        }
-      } catch (error) {
-        history.replaceState(null, "", location.pathname);
-        loadCms();
-      }
-    } else {
-      loadCms();
-    }
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/decap-cms@beta/dist/decap-cms.js"></script>
 </body>
 </html>
