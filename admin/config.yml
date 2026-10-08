@@ -12,16 +12,18 @@ collections:
     files:
       - name: "media"
         label: "Gallery"
+        description: "Files uploaded to the Media Library are not shown automatically. Add each photo or video as a media item here, then publish the gallery."
         file: "content/media.json"
         format: "json"
         fields:
           - name: "media"
             label: "Media items"
             widget: "list"
+            hint: "Add one item per photo or video you want displayed on the website."
             summary: "{{fields.title}}"
             fields:
               - { name: "type", label: "Media type", widget: "select", options: ["image", "video"] }
-              - { name: "src", label: "Photo or video", widget: "file" }
+              - { name: "src", label: "Photo or video", widget: "file", hint: "Choose an existing upload or upload it here. The item appears on the site after you publish the gallery." }
               - { name: "poster", label: "Video preview image (optional)", widget: "image", required: false, hint: "Use this for videos. Leave blank for photos." }
               - { name: "title", label: "Title", widget: "string" }
               - { name: "description", label: "Description", widget: "text" }
